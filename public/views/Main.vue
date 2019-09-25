@@ -7,10 +7,6 @@
 				<div class="stat-label">Tokens</div>
 			</div>
 			<div class="stat">
-				<div class="stat-amount">152</div>
-				<div class="stat-label">Holders</div>
-			</div>
-			<div class="stat">
 				<div class="stat-amount">$1.8M</div>
 				<div class="stat-label">Total market cap</div>
 			</div>
