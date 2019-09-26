@@ -124,8 +124,8 @@ export default {
 	data() {
 		return {
 			'set': undefined,
-			'setTicker': '',
-			'setTickers': {
+			'ticker': '',
+			'tickers': {
 				'ETH20SMACO': 'ETH20SMACO',
 				'ETH50SMACO': 'ETH50SMACO',
 				'ETH12EMACO': 'ETH12EMACO',
@@ -140,7 +140,7 @@ export default {
 				'BTCDai': 'BTCHIVOL',
 				'ETHDai': 'ETHHIVOL',
 			},
-			'setDescriptions': {
+			'descriptions': {
 				'ETH20SMACO': 'ETH 20 Day Moving Average Crossover',
 				'ETH50SMACO': 'ETH 50 Day Moving Average Crossover',
 				'ETH12EMACO': 'ETH 12 Day EMA Crossover',
@@ -155,7 +155,7 @@ export default {
 				'BTCHIVOL': 'BTC Range Bound High Volatility',
 				'ETHHIVOL': 'ETH Range Bound High Volatility',
 			},
-			'setIcons': {
+			'icons': {
 				'ETH20SMACO': eth20smaco,
 				'ETH50SMACO': eth50smaco,
 				'ETH12EMACO': eth12emaco,
@@ -191,7 +191,7 @@ export default {
 		}
 	},
 	async mounted() {
-		this.setTicker = this.$route.params.ticker;
+		this.ticker = this.$route.params.ticker;
 		await this.loadPrices();
 		await this.loadSet();
 	},
@@ -240,8 +240,8 @@ export default {
 			const tokenSets = data.tokenSets;
 			for (const tokenSet of tokenSets) {
 				const symbol = tokenSet.set_.symbol;
-				const ticker = this.setTickers[symbol];
-				if (ticker != this.setTicker) {
+				const ticker = this.tickers[symbol];
+				if (ticker != this.ticker) {
 					continue;
 				}
 				const set = {
@@ -310,7 +310,7 @@ export default {
 	},
 	computed: {
 		tokenSet() {
-			const ticker = this.setTicker;
+			const ticker = this.ticker;
 			const set = this.set;
 			if (!ticker || !set) {
 				return;
@@ -319,8 +319,8 @@ export default {
 			const price = this.getPrice(set);
 			const tokenSet = {
 				ticker,
-				icon: this.setIcons[ticker],
-				description: this.setDescriptions[ticker],
+				icon: this.icons[ticker],
+				description: this.descriptions[ticker],
 				supply,
 				price,
 				marketCap: this.getMarketCap(supply, price),
