@@ -211,8 +211,17 @@ export default {
 			return supply.toFixed(2);
 		},
 		formatMoney(priceString) {
-			const price = new BigNumber(priceString);
-			return `$${price.toFixed(2)}`;
+			let price = new BigNumber(priceString);
+			let suffix = '';
+			if (price.gt(1000)) {
+				price = price.div(1000);
+				suffix = 'K';
+			}
+			if (price.gt(1000)) {
+				price = price.div(1000);
+				suffix = 'M';
+			}
+			return `$${price.toFixed(2)}${suffix}`;
 		}
 	},
 	computed: {
