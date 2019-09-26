@@ -23,15 +23,10 @@
 			<div id="holdings" class="section block">
 				<h3 class="section-title">Holdings</h3>
 				<div id="holding-list">
-					<div class="holding">
-						<div class="holding-asset">ETH</div>
+					<div class="holding" v-for="holding in tokenSet.holdings">
+						<div class="holding-asset">{{ holding.ticker }}</div>
 						<div class="holding-line">---------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
-						<div class="holding-share">100%</div>
-					</div>
-					<div class="holding">
-						<div class="holding-asset">USDC</div>
-						<div class="holding-line">-</div>
-						<div class="holding-share">0%</div>
+						<div class="holding-share">{{ formatShare(holding.share) }}</div>
 					</div>
 				</div>
 			</div>
@@ -329,17 +324,47 @@ export default {
 			let value = new BigNumber(0);
 			for (let i = 0; i < count; i++) {
 				const component = components[i];
-				const componentTicker = this.componentAddresses[component];
 				const unit = new BigNumber(units[i]);
-				const price = new BigNumber(this.prices[componentTicker]);
-				const ten = new BigNumber(10);
-				const decimals = this.decimals[componentTicker];
-				const multiplier = ten.pow(18 - decimals);
-				const componentValue = unit.times(price).times(multiplier);
+				const componentValue = this.getComponentValue(component, unit);
 				value = value.plus(componentValue);
 			}
 			const price = value.div(naturalUnit);
 			return price.toString();
+		},
+		getHoldings(set) {
+			const components = set.components;
+			const units = set.units;
+			const naturalUnit = set.naturalUnit;
+			const count = components.length;
+			let value = new BigNumber(0);
+			for (let i = 0; i < count; i++) {
+				const component = components[i];
+				const unit = new BigNumber(units[i]);
+				const componentValue = this.getComponentValue(component, unit);
+				value = value.plus(componentValue);
+			}
+			const holdings = [];
+			for (let i = 0; i < count; i++) {
+				const component = components[i];
+				const unit = new BigNumber(units[i]);
+				const componentValue = this.getComponentValue(component, unit);
+				const componentShare = componentValue.div(value);
+				const holding = {
+					ticker: this.componentAddresses[component],
+					share: componentShare.toString(),
+				};
+				holdings.push(holding);
+			}
+			return holdings;
+		},
+		getComponentValue(component, unit) {
+			const componentTicker = this.componentAddresses[component];
+			const price = new BigNumber(this.prices[componentTicker]);
+			const ten = new BigNumber(10);
+			const decimals = this.decimals[componentTicker];
+			const multiplier = ten.pow(18 - decimals);
+			const componentValue = unit.times(price).times(multiplier);
+			return componentValue;
 		},
 		getMarketCap(supplyString, priceString) {
 			const supply = new BigNumber(supplyString);
@@ -365,6 +390,10 @@ export default {
 				suffix = 'M';
 			}
 			return `$${price.toFixed(2)}${suffix}`;
+		},
+		formatShare(shareString) {
+			const share = new BigNumber(shareString);
+			return `${share.times(100)}%`;
 		},
 		formatTimestamp(timestamp) {
 			const date = new Date(timestamp * 1000);
@@ -393,6 +422,7 @@ export default {
 				supply,
 				price,
 				marketCap: this.getMarketCap(supply, price),
+				holdings: this.getHoldings(set),
 			}
 			return tokenSet;
 		}
