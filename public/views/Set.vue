@@ -47,15 +47,10 @@
 							<th class="column-address">User</th>
 							<th class="column-number">Amount</th>
 						</tr>
-						<tr class="row-data">
-							<td class="column-date">Today</td>
-							<td class="column-address">0x1234…5678</td>
-							<td class="column-number">1,312</td>
-						</tr>
-						<tr class="row-data">
-							<td class="column-date">Yesterday</td>
-							<td class="column-address">0x1234…5678</td>
-							<td class="column-number">659</td>
+						<tr class="row-data" v-for="issuance in issuances">
+							<td class="column-date">{{ formatTimestamp(issuance.timestamp) }}</td>
+							<td class="column-address">{{ formatAddress(issuance.account) }}</td>
+							<td class="column-number">{{ issuance.amount }}</td>
 						</tr>
 					</table>
 				</div>
@@ -67,15 +62,10 @@
 							<th class="column-address">User</th>
 							<th class="column-number">Amount</th>
 						</tr>
-						<tr class="row-data">
-							<td class="column-date">Today</td>
-							<td class="column-address">0x1234…5678</td>
-							<td class="column-number">1,312</td>
-						</tr>
-						<tr class="row-data">
-							<td class="column-date">Yesterday</td>
-							<td class="column-address">0x1234…5678</td>
-							<td class="column-number">659</td>
+						<tr class="row-data" v-for="redemption in redemptions">
+							<td class="column-date">{{ formatTimestamp(redemption.timestamp) }}</td>
+							<td class="column-address">{{ formatAddress(redemption.account) }}</td>
+							<td class="column-number">{{ redemption.amount }}</td>
 						</tr>
 					</table>
 				</div>
@@ -90,15 +80,10 @@
 						<th class="column-address">Old set</th>
 						<th class="column-address">New set</th>
 					</tr>
-					<tr class="row-data">
-						<td class="column-date">Today</td>
-						<td class="column-address">0x1234…5678</td>
-						<td class="column-address">0x1234…5678</td>
-					</tr>
-					<tr class="row-data">
-						<td class="column-date">Yesterday</td>
-						<td class="column-address">0x1234…5678</td>
-						<td class="column-address">0x1234…5678</td>
+					<tr class="row-data" v-for="rebalance in rebalances">
+						<td class="column-date">{{ formatTimestamp(rebalance.timestamp)}}</td>
+						<td class="column-address">{{ formatAddress(rebalance.oldSet) }}</td>
+						<td class="column-address">{{ formatAddress(rebalance.newSet) }}</td>
 					</tr>
 				</table>
 			</div>
@@ -125,6 +110,9 @@ export default {
 		return {
 			'set': undefined,
 			'ticker': '',
+			'issuances': [],
+			'redemptions': [],
+			'rebalances': [],
 			'tickers': {
 				'ETH20SMACO': 'ETH20SMACO',
 				'ETH50SMACO': 'ETH50SMACO',
@@ -170,6 +158,21 @@ export default {
 				'BTCHIVOL': btcvol,
 				'ETHHIVOL': ethvol,
 			},
+			'addresses': {
+				'ETH12EMACO': '0x2c5a9980b41861d91d30d0e0271d1c093452dca5',
+				'ETH26EMACO': '0x614857c755739354d68ae0abd53849cf45d6a41d',
+				'ETH20SMACO': '0x9ea463ec4ce9e9e5bc9cfd0187c4ac3a70dd951d',
+				'ETH50SMACO': '0xa360f2af3f957906468c0fd7526391aed08ae3db',
+				'BTCETH7525': '0xa35fc5019c4dc509394bd4d74591a0bf8852c195',
+				'BTCETH2575': '0xa6c040045d962e4b8efa00954c7d23ccd0a2b8ad',
+				'BTCETH5050': '0xc06aec5191be16b94ffc97b6fc01393527367365',
+				'BTCLOVOL': '0x20649d97b1393105cf92a5083fd2aff7c99ebe56',
+				'ETHLOVOL': '0x585c2cf94c41b528ec7329cbc3cde3c4f8d268db',
+				'BTCHIVOL': '0x6123a0cbc95cb157995a0795187a60995b85e0a9',
+				'BTCMINVOL': '0x81c55017f7ce6e72451ced49ff7bab1e3df64d0c',
+				'ETHHIVOL': '0x8ddc86dba7ad728012efc460b8a168aba60b403b',
+				'ETHMINVOL': '0xf1e5f03086e1c0ce55e54cd8146bc9c28435346f',
+			},
 			'prices': {
 				'DAI': 0,
 				'USDC': 0,
@@ -182,7 +185,7 @@ export default {
 				'WETH': 18,
 				'WBTC': 8,
 			},
-			'addresses': {
+			'componentAddresses': {
 				'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': 'DAI',
 				'0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
 				'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
@@ -215,9 +218,12 @@ export default {
 		},
 		async loadSet() {
 			const url = "https://api.thegraph.com/subgraphs/name/destiner/token-sets";
+			const setAddress = this.addresses[this.ticker];
 			const query = `
 				query {
-					tokenSets {
+					tokenSets(where: {
+						set_: "${setAddress}"
+					}) {
 						set_ {
 							symbol
 							supply
@@ -227,6 +233,29 @@ export default {
 							units
 							naturalUnit
 						}
+						rebalances(orderBy: timestamp, orderDirection: desc) {
+							timestamp
+							oldSet {
+								address
+							}
+							newSet {
+								address
+							}
+						}
+					}
+					issuances(first: 3, orderBy: timestamp, orderDirection: desc, where: {
+						set_: "${setAddress}"
+					}) {
+						timestamp
+						amount
+						account
+					}
+					redemptions(first: 3, orderBy: timestamp, orderDirection: desc, where: {
+						set_: "${setAddress}"
+					}) {
+						timestamp
+						amount
+						account
 					}
 				}`;
 			const opts = {
@@ -237,21 +266,51 @@ export default {
 			const response = await fetch(url, opts);
 			const json = await response.json();
 			const data = json.data;
-			const tokenSets = data.tokenSets;
-			for (const tokenSet of tokenSets) {
-				const symbol = tokenSet.set_.symbol;
-				const ticker = this.tickers[symbol];
-				if (ticker != this.ticker) {
-					continue;
-				}
-				const set = {
-					symbol: tokenSet.set_.symbol,
-					supply: tokenSet.set_.supply,
-					components: tokenSet.underlyingSet.components,
-					units: tokenSet.underlyingSet.units,
-					naturalUnit: tokenSet.underlyingSet.naturalUnit,
-				};
-				this.set = set;
+			const tokenSet = data.tokenSets[0];
+			const symbol = tokenSet.set_.symbol;
+			// Save set
+			const set = {
+				symbol: tokenSet.set_.symbol,
+				supply: tokenSet.set_.supply,
+				components: tokenSet.underlyingSet.components,
+				units: tokenSet.underlyingSet.units,
+				naturalUnit: tokenSet.underlyingSet.naturalUnit,
+			};
+			this.set = set;
+			// Save issuances
+			const issuances = data.issuances;
+			for (const issuance of issuances) {
+				const amount = new BigNumber(issuance.amount);
+				const ten = new BigNumber(10);
+				const multiplier = ten.pow(18);
+				const shortAmount = amount.div(multiplier);
+				this.issuances.push({
+					timestamp: issuance.timestamp,
+					account: issuance.account,
+					amount: shortAmount.toString(),
+				});
+			}
+			// Save redemptions
+			const redemptions = data.redemptions;
+			for (const redemption of redemptions) {
+				const amount = new BigNumber(redemption.amount);
+				const ten = new BigNumber(10);
+				const multiplier = ten.pow(18);
+				const shortAmount = amount.div(multiplier);
+				this.redemptions.push({
+					timestamp: redemption.timestamp,
+					account: redemption.account,
+					amount: shortAmount.toString(),
+				})
+			}
+			// Save rebalances
+			const rebalances = tokenSet.rebalances;
+			for (const rebalance of rebalances) {
+				this.rebalances.push({
+					timestamp: rebalance.timestamp,
+					oldSet: rebalance.oldSet.address,
+					newSet: rebalance.newSet.address,
+				});
 			}
 		},
 		getSupply(supplyString) {
@@ -270,7 +329,7 @@ export default {
 			let value = new BigNumber(0);
 			for (let i = 0; i < count; i++) {
 				const component = components[i];
-				const componentTicker = this.addresses[component];
+				const componentTicker = this.componentAddresses[component];
 				const unit = new BigNumber(units[i]);
 				const price = new BigNumber(this.prices[componentTicker]);
 				const ten = new BigNumber(10);
@@ -306,6 +365,16 @@ export default {
 				suffix = 'M';
 			}
 			return `$${price.toFixed(2)}${suffix}`;
+		},
+		formatTimestamp(timestamp) {
+			const date = new Date(timestamp * 1000);
+			const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+			const dateString = date.toLocaleDateString('en-EN', options);
+			return dateString;
+		},
+		formatAddress(addresses) {
+			const shortAddress = `${addresses.substr(0,6)}…${addresses.substr(38)}`;
+			return shortAddress;
 		},
 	},
 	computed: {
