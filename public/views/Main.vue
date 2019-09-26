@@ -142,6 +142,8 @@
 </template>
 
 <script>
+import Vue from 'vue';
+
 import eth20smaco from "../assets/eth20smaco.svg";
 import eth50smaco from "../assets/eth50smaco.svg";
 import eth12emaco from "../assets/eth12emaco.svg";
@@ -155,6 +157,7 @@ import btcvol from "../assets/btcvol.svg";
 export default {
 	data() {
 		return {
+			'sets': {},
 			'setTickers': {
 				'ETH20SMACO': 'ETH20SMACO',
 				'ETH50SMACO': 'ETH50SMACO',
@@ -205,6 +208,10 @@ export default {
 			},
 		}
 	},
+	async mounted() {
+		await this.loadPrices();
+		await this.loadSets();
+	},
 	methods: {
 		openSet() {
 			this.$router.push({
@@ -213,8 +220,63 @@ export default {
 					ticker: 'eth20smaco'
 				}
 			});
-		}
-	}
+		},
+		async loadPrices() {
+			const tickers = {
+				'dai': 'DAI',
+				'usd-coin': 'USDC',
+				'ethereum': 'WETH',
+				'wrapped-bitcoin': 'WBTC',
+			};
+			const assetIds = Object.keys(tickers).join('%2C');
+			const url = `https://api.coingecko.com/api/v3/simple/price?ids=${assetIds}&vs_currencies=usd`;
+			const response = await fetch(url);
+			const prices = await response.json();
+			for (const id in prices) {
+				const ticker = tickers[id];
+				const price = prices[id].usd;
+				Vue.set(this.prices, ticker, price);
+			}
+		},
+		async loadSets() {
+			const url = "https://api.thegraph.com/subgraphs/name/destiner/token-sets";
+			const query = `
+				query {
+					tokenSets {
+						set_ {
+							symbol
+							supply
+						}
+						underlyingSet {
+							components
+							units
+							naturalUnit
+						}
+					}
+				}`;
+			const opts = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ query })
+			};
+			const response = await fetch(url, opts);
+			const json = await response.json();
+			const data = json.data;
+			const tokenSets = data.tokenSets;
+			const sets = [];
+			for (const tokenSet of tokenSets) {
+				const set = {
+					symbol: tokenSet.set_.symbol,
+					supply: tokenSet.set_.supply,
+					components: tokenSet.underlyingSet.components,
+					units: tokenSet.underlyingSet.units,
+					naturalUnit: tokenSet.underlyingSet.naturalUnit,
+				};
+				sets.push(set);
+			}
+			this.sets = sets;
+		},
+	},
 }
 </script>
 
