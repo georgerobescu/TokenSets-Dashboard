@@ -57,7 +57,7 @@
 						<tr class="row-data" v-for="issuance in issuances">
 							<td class="column-date">{{ formatTimestamp(issuance.timestamp) }}</td>
 							<td class="column-address">{{ formatAddress(issuance.account) }}</td>
-							<td class="column-number">{{ issuance.amount }}</td>
+							<td class="column-number">{{ formatAmount(issuance.amount) }}</td>
 						</tr>
 					</table>
 				</div>
@@ -72,7 +72,7 @@
 						<tr class="row-data" v-for="redemption in redemptions">
 							<td class="column-date">{{ formatTimestamp(redemption.timestamp) }}</td>
 							<td class="column-address">{{ formatAddress(redemption.account) }}</td>
-							<td class="column-number">{{ redemption.amount }}</td>
+							<td class="column-number">{{ formatAmount(redemption.amount) }}</td>
 						</tr>
 					</table>
 				</div>
@@ -389,6 +389,10 @@ export default {
 		formatSupply(supplyString) {
 			const supply = new BigNumber(supplyString);
 			return supply.toFixed(2);
+		},
+		formatAmount(amountString) {
+			const amount = new BigNumber(amountString);
+			return amount.toFixed(2);
 		},
 		formatMoney(priceString) {
 			let price = new BigNumber(priceString);
