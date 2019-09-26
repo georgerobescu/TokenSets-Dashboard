@@ -210,7 +210,7 @@ export default {
 			const ten = new BigNumber(10);
 			const multiplier = ten.pow(18);
 			const marketCap = supply.times(price);
-			return marketCap;
+			return marketCap.toString();
 		},
 		formatSupply(supplyString) {
 			const supply = new BigNumber(supplyString);
@@ -249,6 +249,15 @@ export default {
 				};
 				tokenSets.push(tokenSet);
 			}
+			tokenSets.sort((a, b) => {
+				const aMarketCap = new BigNumber(a.marketCap);
+				const bMarketCap = new BigNumber(b.marketCap);
+				return aMarketCap.lt(bMarketCap)
+					? 1
+					: aMarketCap.gt(bMarketCap)
+						? -1
+						: 0;
+			})
 			return tokenSets;
 		},
 		totalMarketCap() {
