@@ -25,7 +25,19 @@
 				<div id="holding-list">
 					<div class="holding" v-for="holding in tokenSet.holdings">
 						<div class="holding-asset">{{ holding.ticker }}</div>
-						<div class="holding-line">---------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+						<div class="holding-line-wrapper">
+							<div class="holding-line" :class="{ 
+								'holding-line-usdc': holding.ticker == 'USDC',
+								'holding-line-dai': holding.ticker == 'DAI',
+								'holding-line-eth': holding.ticker == 'WETH',
+								'holding-line-btc': holding.ticker == 'WBTC',
+								'holding-line-0': holding.share < 0.2,
+								'holding-line-25': holding.share >= 0.2 && holding.share < 0.45,
+								'holding-line-50': holding.share >= 0.45 && holding.share < 0.65,
+								'holding-line-75': holding.share >= 0.65 && holding.share < 0.85,
+								'holding-line-100': holding.share >= 0.85,
+							}"></div>
+						</div>
 						<div class="holding-share">{{ formatShare(holding.share) }}</div>
 					</div>
 				</div>
@@ -393,7 +405,7 @@ export default {
 		},
 		formatShare(shareString) {
 			const share = new BigNumber(shareString);
-			return `${share.times(100)}%`;
+			return `${share.times(100).toFixed(0)}%`;
 		},
 		formatTimestamp(timestamp) {
 			const date = new Date(timestamp * 1000);
@@ -496,8 +508,52 @@ export default {
 	flex: 1;
 }
 
-.holding-line {
+.holding-line-wrapper {
 	flex: 10;
+	display: flex;
+	align-items: center;
+}
+
+.holding-line {
+	border-radius: 20px;
+	font-weight: 600;
+	height: 8px;
+}
+
+.holding-line-0 {
+	width: 0%;
+}
+
+.holding-line-25 {
+	width: 25%;
+}
+
+.holding-line-50 {
+	width: 50%;
+}
+
+.holding-line-75 {
+	width: 75%;
+}
+
+.holding-line-100 {
+	width: 100%;
+}
+
+.holding-line-eth {
+	background: linear-gradient(to right, #8089f5, #4950e8);
+}
+
+.holding-line-btc {
+	background: linear-gradient(to right, #f4b27a, #f09242);
+}
+
+.holding-line-usdc {
+	background: linear-gradient(to right, #2775ca, #2926c9);
+}
+
+.holding-line-dai {
+	background: linear-gradient(to right, #ffcc80, #ffb74d);
 }
 
 .holding-share {
