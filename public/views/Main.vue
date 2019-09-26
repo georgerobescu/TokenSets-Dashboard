@@ -140,6 +140,8 @@ export default {
 						set_ {
 							symbol
 							supply
+							units
+							naturalUnit
 						}
 						underlyingSet {
 							components
@@ -162,9 +164,11 @@ export default {
 				const set = {
 					symbol: tokenSet.set_.symbol,
 					supply: tokenSet.set_.supply,
-					components: tokenSet.underlyingSet.components,
-					units: tokenSet.underlyingSet.units,
-					naturalUnit: tokenSet.underlyingSet.naturalUnit,
+					units: tokenSet.set_.units,
+					naturalUnit: tokenSet.set_.naturalUnit,
+					underlyingComponents: tokenSet.underlyingSet.components,
+					underlyingUnits: tokenSet.underlyingSet.units,
+					underlyingNaturalUnit: tokenSet.underlyingSet.naturalUnit,
 				};
 				sets.push(set);
 			}
@@ -179,15 +183,15 @@ export default {
 			return shortSupplyString;
 		},
 		getPrice(set) {
-			const components = set.components;
-			const units = set.units;
-			const naturalUnit = set.naturalUnit;
-			const count = components.length;
+			const underlyingComponents = set.underlyingComponents;
+			const underlyingUnits = set.underlyingUnits;
+			const underlyingNaturalUnit = set.underlyingNaturalUnit;
+			const count = underlyingComponents.length;
 			let value = new BigNumber(0);
 			for (let i = 0; i < count; i++) {
-				const component = components[i];
+				const component = underlyingComponents[i];
 				const componentTicker = this.addresses[component];
-				const unit = new BigNumber(units[i]);
+				const unit = new BigNumber(underlyingUnits[i]);
 				const price = new BigNumber(this.prices[componentTicker]);
 				const ten = new BigNumber(10);
 				const decimals = this.decimals[componentTicker];
@@ -195,7 +199,9 @@ export default {
 				const componentValue = unit.times(price).times(multiplier);
 				value = value.plus(componentValue);
 			}
-			const price = value.div(naturalUnit);
+			const setUnits = set.units;
+			const setNaturalUnit = set.naturalUnit;
+			const price = value.div(underlyingNaturalUnit).times(setUnits).div(setNaturalUnit);
 			return price.toString();
 		},
 		getMarketCap(supplyString, priceString) {

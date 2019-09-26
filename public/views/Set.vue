@@ -234,6 +234,8 @@ export default {
 						set_ {
 							symbol
 							supply
+							units
+							naturalUnit
 						}
 						underlyingSet {
 							components
@@ -279,9 +281,11 @@ export default {
 			const set = {
 				symbol: tokenSet.set_.symbol,
 				supply: tokenSet.set_.supply,
-				components: tokenSet.underlyingSet.components,
-				units: tokenSet.underlyingSet.units,
-				naturalUnit: tokenSet.underlyingSet.naturalUnit,
+				units: tokenSet.set_.units,
+				naturalUnit: tokenSet.set_.naturalUnit,
+				underlyingComponents: tokenSet.underlyingSet.components,
+				underlyingUnits: tokenSet.underlyingSet.units,
+				underlyingNaturalUnit: tokenSet.underlyingSet.naturalUnit,
 			};
 			this.set = set;
 			// Save issuances
@@ -329,36 +333,37 @@ export default {
 			return shortSupplyString;
 		},
 		getPrice(set) {
-			const components = set.components;
-			const units = set.units;
-			const naturalUnit = set.naturalUnit;
-			const count = components.length;
+			const underlyingComponents = set.underlyingComponents;
+			const underlyingUnits = set.underlyingUnits;
+			const underlyingNaturalUnit = set.underlyingNaturalUnit;
+			const count = underlyingComponents.length;
 			let value = new BigNumber(0);
 			for (let i = 0; i < count; i++) {
-				const component = components[i];
-				const unit = new BigNumber(units[i]);
+				const component = underlyingComponents[i];
+				const unit = new BigNumber(underlyingUnits[i]);
 				const componentValue = this.getComponentValue(component, unit);
 				value = value.plus(componentValue);
 			}
-			const price = value.div(naturalUnit);
+			const setUnits = set.units;
+			const setNaturalUnit = set.naturalUnit;
+			const price = value.div(underlyingNaturalUnit).times(setUnits).div(setNaturalUnit);
 			return price.toString();
 		},
 		getHoldings(set) {
-			const components = set.components;
-			const units = set.units;
-			const naturalUnit = set.naturalUnit;
-			const count = components.length;
+			const underlyingComponents = set.underlyingComponents;
+			const underlyingUnits = set.underlyingUnits;
+			const count = underlyingComponents.length;
 			let value = new BigNumber(0);
 			for (let i = 0; i < count; i++) {
-				const component = components[i];
-				const unit = new BigNumber(units[i]);
+				const component = underlyingComponents[i];
+				const unit = new BigNumber(underlyingUnits[i]);
 				const componentValue = this.getComponentValue(component, unit);
 				value = value.plus(componentValue);
 			}
 			const holdings = [];
 			for (let i = 0; i < count; i++) {
-				const component = components[i];
-				const unit = new BigNumber(units[i]);
+				const component = underlyingComponents[i];
+				const unit = new BigNumber(underlyingUnits[i]);
 				const componentValue = this.getComponentValue(component, unit);
 				const componentShare = componentValue.div(value);
 				const holding = {
