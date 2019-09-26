@@ -107,12 +107,12 @@ export default {
 		await this.loadSets();
 	},
 	methods: {
-		openSet() {
+		openSet(tokenSet) {
 			this.$router.push({
 				name: 'set',
 				params: {
-					ticker: 'eth20smaco'
-				}
+					ticker: tokenSet.ticker,
+				},
 			});
 		},
 		async loadPrices() {
