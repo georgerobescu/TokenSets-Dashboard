@@ -3,11 +3,11 @@
 		<h1 id="title">TokenSets Dashboard</h1>
 		<div id="stats">
 			<div class="stat">
-				<div class="stat-amount">13</div>
+				<div class="stat-amount">{{ totalSetCount }}</div>
 				<div class="stat-label">Tokens</div>
 			</div>
 			<div class="stat">
-				<div class="stat-amount">$1.8M</div>
+				<div class="stat-amount">{{ formatMoney(totalMarketCap) }}</div>
 				<div class="stat-label">Total market cap</div>
 			</div>
 		</div>
@@ -19,122 +19,15 @@
 					<th class="column-number">Price</th>
 					<th class="column-number">Market cap</th>
 				</tr>
-				<tr class="row-data" @click="openSet()">
+
+				<tr class="row-data" @click="openSet(tokenSet)" v-for="tokenSet in tokenSets">
 					<td class="column-name">
-						<img class="set-icon" src="../assets/eth20smaco.svg">
-						<span class="set-title">ETH20SMACO</span>
+						<img class="set-icon" :src="tokenSet.icon">
+						<span class="set-title">{{ tokenSet.ticker }}</span>
 					</td>
-					<td class="column-number">5,712</td>
-					<td class="column-number">$245.37</td>
-					<td class="column-number">$1,401,439</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/eth12emaco.svg">
-						<span class="set-title">ETH12EMACO</span>
-					</td>
-					<td class="column-number">1,354</td>
-					<td class="column-number">$199.92</td>
-					<td class="column-number">$270,601</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/eth26emaco.svg">
-						<span class="set-title">ETH26EMACO</span>
-					</td>
-					<td class="column-number">1,357</td>
-					<td class="column-number">$169.26</td>
-					<td class="column-number">$229,752</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/ethvol.svg">
-						<span class="set-title">ETHLOVOL</span>
-					</td>
-					<td class="column-number">1,191</td>
-					<td class="column-number">$103.21</td>
-					<td class="column-number">$122,926</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btceth5050.svg">
-						<span class="set-title">BTCETH5050</span>
-					</td>
-					<td class="column-number">420</td>
-					<td class="column-number">$248.58</td>
-					<td class="column-number">$104,445</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/eth50smaco.svg">
-						<span class="set-title">ETH50SMACO</span>
-					</td>
-					<td class="column-number">608</td>
-					<td class="column-number">$146.55</td>
-					<td class="column-number">$89,049</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/ethvol.svg">
-						<span class="set-title">ETHMINVOL</span>
-					</td>
-					<td class="column-number">484</td>
-					<td class="column-number">$77.47</td>
-					<td class="column-number">$37,530</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btceth2575.svg">
-						<span class="set-title">ETHBTC7525</span>
-					</td>
-					<td class="column-number">279</td>
-					<td class="column-number">$110.91</td>
-					<td class="column-number">$30,960</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btceth7525.svg">
-						<span class="set-title">BTCETH7525</span>
-					</td>
-					<td class="column-number">191</td>
-					<td class="column-number">$144.33</td>
-					<td class="column-number">$27,560</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btcvol.svg">
-						<span class="set-title">BTCMINVOL</span>
-					</td>
-					<td class="column-number">228</td>
-					<td class="column-number">$92.58</td>
-					<td class="column-number">$21,110</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/ethvol.svg">
-						<span class="set-title">ETHHIVOL</span>
-					</td>
-					<td class="column-number">162</td>
-					<td class="column-number">$107.82</td>
-					<td class="column-number">$17,419</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btcvol.svg">
-						<span class="set-title">BTCLOVOL</span>
-					</td>
-					<td class="column-number">109</td>
-					<td class="column-number">$133.37</td>
-					<td class="column-number">$14,527</td>
-				</tr>
-				<tr class="row-data" @click="openSet()">
-					<td class="column-name">
-						<img class="set-icon" src="../assets/btcvol.svg">
-						<span class="set-title">BTCHIVOL</span>
-					</td>
-					<td class="column-number">82</td>
-					<td class="column-number">$135.22</td>
-					<td class="column-number">$11,103</td>
+					<td class="column-number">{{ formatSupply(tokenSet.supply) }}</td>
+					<td class="column-number">{{ formatMoney(tokenSet.price) }}</td>
+					<td class="column-number">{{ formatMoney(tokenSet.marketCap) }}</td>
 				</tr>
 			</table>
 		</div>
@@ -143,6 +36,7 @@
 
 <script>
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 
 import eth20smaco from "../assets/eth20smaco.svg";
 import eth50smaco from "../assets/eth50smaco.svg";
@@ -276,7 +170,83 @@ export default {
 			}
 			this.sets = sets;
 		},
+		getSupply(supplyString) {
+			const supplyNumber = new BigNumber(supplyString);
+			const ten = new BigNumber(10);
+			const multiplier = ten.pow(18);
+			const shortSupplyNumber = supplyNumber.div(multiplier);
+			const shortSupplyString = shortSupplyNumber.toString();
+			return shortSupplyString;
+		},
+		getPrice(set) {
+			const components = set.components;
+			const units = set.units;
+			const naturalUnit = set.naturalUnit;
+			const count = components.length;
+			let value = new BigNumber(0);
+			for (let i = 0; i < count; i++) {
+				const component = components[i];
+				const componentTicker = this.addresses[component];
+				const unit = new BigNumber(units[i]);
+				const price = new BigNumber(this.prices[componentTicker]);
+				const ten = new BigNumber(10);
+				const decimals = this.decimals[componentTicker];
+				const multiplier = ten.pow(18 - decimals);
+				const componentValue = unit.times(price).times(multiplier);
+				value = value.plus(componentValue);
+			}
+			const price = value.div(naturalUnit);
+			return price.toString();
+		},
+		getMarketCap(supplyString, priceString) {
+			const supply = new BigNumber(supplyString);
+			const price = new BigNumber(priceString);
+			const ten = new BigNumber(10);
+			const multiplier = ten.pow(18);
+			const marketCap = supply.times(price);
+			return marketCap;
+		},
+		formatSupply(supplyString) {
+			const supply = new BigNumber(supplyString);
+			return supply.toFixed(2);
+		},
+		formatMoney(priceString) {
+			const price = new BigNumber(priceString);
+			return `$${price.toFixed(2)}`;
+		}
 	},
+	computed: {
+		tokenSets() {
+			const tokenSets = [];
+			if (Object.keys(this.sets) == 0) {
+				return tokenSets;
+			}
+			for (const set of this.sets) {
+				const ticker = this.setTickers[set.symbol];
+				const supply = this.getSupply(set.supply);
+				const price = this.getPrice(set);
+				const tokenSet = {
+					ticker,
+					icon: this.setIcons[ticker],
+					supply,
+					price,
+					marketCap: this.getMarketCap(supply, price),
+				};
+				tokenSets.push(tokenSet);
+			}
+			return tokenSets;
+		},
+		totalMarketCap() {
+			const zero = new BigNumber(0);
+			const marketCap = this.tokenSets.reduce((total, tokenSet) => {
+				return total.plus(tokenSet.marketCap);
+			}, zero);
+			return marketCap;
+		},
+		totalSetCount() {
+			return this.tokenSets.length;
+		},
+	}
 }
 </script>
 
