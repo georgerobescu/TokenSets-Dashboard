@@ -11,12 +11,12 @@
 				<div class="stat-label">Supply</div>
 			</div>
 			<div class="stat">
-				<div class="stat-amount">{{ formatMoney(tokenSet.marketCap) }}</div>
-				<div class="stat-label">Market cap</div>
-			</div>
-			<div class="stat">
 				<div class="stat-amount">{{ formatMoney(tokenSet.price) }}</div>
 				<div class="stat-label">Price</div>
+			</div>
+			<div class="stat">
+				<div class="stat-amount">{{ formatMoney(tokenSet.marketCap) }}</div>
+				<div class="stat-label">Market cap</div>
 			</div>
 		</div>
 		<div class="section-wrapper">
