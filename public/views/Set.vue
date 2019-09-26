@@ -492,7 +492,7 @@ export default {
 .block {
 	border-radius: 8px;
 	padding: 1em;
-	border: 1px solid #e0d8f4;
+	border: 1px solid #9f958c;
 }
 
 #holdings {

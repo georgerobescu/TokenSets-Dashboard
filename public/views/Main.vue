@@ -294,12 +294,12 @@ table {
 	width: 800px;
 	padding: 1em;
 	border-radius: 8px;
-	border: 1px solid #dad7e2;
+	border: 1px solid #9f958c;
 }
 
 tr {
 	display: flex;
-	border-bottom: 1px solid #dad7e2;
+	border-bottom: 1px solid #9f958c;
 	padding: 0.75em 1em;
 }
 
