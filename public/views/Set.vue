@@ -7,10 +7,6 @@
 		<div id="set-description">ETH 20 Day Moving Average Crossover</div>
 		<div id="stats">
 			<div class="stat">
-				<div class="stat-amount">108</div>
-				<div class="stat-label">Holders</div>
-			</div>
-			<div class="stat">
 				<div class="stat-amount">1,312</div>
 				<div class="stat-label">Supply</div>
 			</div>
