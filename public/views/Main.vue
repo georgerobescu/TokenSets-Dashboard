@@ -142,7 +142,69 @@
 </template>
 
 <script>
+import eth20smaco from "../assets/eth20smaco.svg";
+import eth50smaco from "../assets/eth50smaco.svg";
+import eth12emaco from "../assets/eth12emaco.svg";
+import eth26emaco from "../assets/eth26emaco.svg";
+import btceth5050 from "../assets/btceth5050.svg";
+import btceth2575 from "../assets/btceth2575.svg";
+import btceth7525 from "../assets/btceth7525.svg";
+import ethvol from "../assets/ethvol.svg";
+import btcvol from "../assets/btcvol.svg";
+
 export default {
+	data() {
+		return {
+			'setTickers': {
+				'ETH20SMACO': 'ETH20SMACO',
+				'ETH50SMACO': 'ETH50SMACO',
+				'ETH12EMACO': 'ETH12EMACO',
+				'ETH26EMACO': 'ETH26EMACO',
+				'BTCETH7525': 'BTCETH7525',
+				'BTCETH2575': 'ETHBTC7525',
+				'BTCETH5050': 'BTCETH5050',
+				'BTCMINVOL': 'BTCMINVOL',
+				'ETHMINVOL': 'ETHMINVOL',
+				'STBTCDai': 'BTCLOVOL',
+				'STETHDai': 'ETHLOVOL',
+				'BTCDai': 'BTCHIVOL',
+				'ETHDai': 'ETHHIVOL',
+			},
+			'setIcons': {
+				'ETH20SMACO': eth20smaco,
+				'ETH50SMACO': eth50smaco,
+				'ETH12EMACO': eth12emaco,
+				'ETH26EMACO': eth26emaco,
+				'BTCETH7525': btceth7525,
+				'ETHBTC7525': btceth2575,
+				'BTCETH5050': btceth5050,
+				'BTCMINVOL': btcvol,
+				'ETHMINVOL': ethvol,
+				'BTCLOVOL': btcvol,
+				'ETHLOVOL': ethvol,
+				'BTCHIVOL': btcvol,
+				'ETHHIVOL': ethvol,
+			},
+			'prices': {
+				'DAI': 0,
+				'USDC': 0,
+				'WETH': 0,
+				'WBTC': 0,
+			},
+			'decimals': {
+				'DAI': 18,
+				'USDC': 6,
+				'WETH': 18,
+				'WBTC': 8,
+			},
+			'addresses': {
+				'0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': 'DAI',
+				'0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
+				'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
+				'0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 'WBTC',
+			},
+		}
+	},
 	methods: {
 		openSet() {
 			this.$router.push({
